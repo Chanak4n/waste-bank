@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ธนาคารขยะโรงเรียน ♻️</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700;800&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#2d6a4f; --green-dark:#1b4332; --green-mid:#40916c; --green-light:#52b788; --green-bright:#74c69d;
+    --gold:#c77d0a; --gold-light:#f4a261;
+    --bg:#f0f7f1; --card:#ffffff; --text:#1b2d1e; --muted:#6b8c74; --border:#c8dcc9;
+    --error:#c0392b; --r:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Sarabun',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);}
+  h1,h2,h3{font-family:'Kanit',sans-serif;}
+
+  /* ─── Header ─── */
+  .hdr{
+    background:linear-gradient(135deg,#1b4332 0%,#2d6a4f 55%,#40916c 100%);
+    color:#fff;padding:32px 20px 78px;position:relative;overflow:hidden;
+  }
+  .hdr::before{
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(ellipse at 80% -20%,rgba(116,198,157,.3) 0%,transparent 60%);
+  }
+  .hdr::after{
+    content:'';position:absolute;inset:0;
+    background-image:radial-gradient(circle,rgba(255,255,255,.04) 1px,transparent 1px);
+    background-size:20px 20px;
+  }
+  .hdr-inner{max-width:720px;margin:0 auto;position:relative;z-index:1;}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);
+    border-radius:999px;padding:5px 14px;font-size:12px;
+    font-family:'Kanit',sans-serif;font-weight:500;letter-spacing:.05em;margin-bottom:16px;
+  }
+  .hdr h1{font-size:clamp(24px,5vw,38px);font-weight:800;line-height:1.2;margin-bottom:10px;}
+  .hdr p{color:rgba(255,255,255,.75);font-size:15px;line-height:1.6;max-width:480px;}
+
+  /* ─── Layout ─── */
+  .wrap{max-width:720px;margin:-55px auto 0;padding:0 16px 48px;}
+  .card{background:var(--card);border-radius:22px;box-shadow:0 24px 60px -20px rgba(27,77,50,.32);overflow:hidden;}
+
+  /* ─── Price banner ─── */
+  .pricebar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:14px 22px;background:linear-gradient(135deg,#fff8e1,#fffde7);border-bottom:1px solid #f0e6c8;
+  }
+  .pricebar label{display:flex;align-items:center;gap:8px;font-size:13.5px;color:#7b5900;font-weight:600;}
+  .price-wrap{
+    display:flex;align-items:center;gap:8px;
+    background:#fff;border:1.5px solid #f0c060;border-radius:10px;padding:7px 12px;
+  }
+  .price-wrap input{
+    width:72px;border:none;outline:none;
+    font-family:'Kanit',sans-serif;font-weight:700;font-size:16px;color:var(--gold);
+    text-align:right;background:transparent;
+  }
+  .price-wrap span{color:#9e7200;font-size:13px;font-weight:600;}
+
+  /* ─── Steps ─── */
+  .steps{padding:26px 22px;display:flex;flex-direction:column;gap:30px;}
+  .step{display:flex;flex-direction:column;gap:12px;}
+  .step-lbl{display:flex;align-items:center;gap:10px;}
+  .snum{
+    width:30px;height:30px;border-radius:50%;
+    background:var(--green);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Kanit',sans-serif;font-weight:700;font-size:14px;flex-shrink:0;
+  }
+  .stitle{font-family:'Kanit',sans-serif;font-weight:600;font-size:16px;color:var(--green-dark);}
+  .shint{font-size:12.5px;color:var(--muted);margin-left:40px;margin-top:-6px;}
+
+  /* inputs */
+  input[type=date],input[type=number],input[type=text],select{
+    width:100%;padding:13px 14px;border:1.5px solid var(--border);border-radius:12px;
+    font-family:'Sarabun',sans-serif;font-size:15px;color:var(--text);
+    background:#fff;transition:border-color .15s,box-shadow .15s;
+    appearance:none;-webkit-appearance:none;
+  }
+  input:focus,select:focus{outline:none;border-color:var(--green-light);box-shadow:0 0 0 3px rgba(82,183,136,.18);}
+  select{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M0 0l6 8 6-8z' fill='%236b8c74'/></svg>");
+    background-repeat:no-repeat;background-position:right 14px center;padding-right:38px;
+  }
+
+  /* grade grid */
+  .grade-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;}
+  .gbtn{
+    padding:12px 4px;text-align:center;border:1.5px solid var(--border);
+    border-radius:10px;background:#f8fdf9;
+    font-family:'Kanit',sans-serif;font-weight:600;font-size:14px;
+    color:var(--text);cursor:pointer;transition:all .14s;
+  }
+  .gbtn:hover{border-color:var(--green-light);background:#eef8f2;}
+  .gbtn.on{background:var(--green);border-color:var(--green-dark);color:#fff;box-shadow:0 4px 12px -4px rgba(27,77,50,.4);}
+
+  /* room */
+  .room-wrap{
+    background:#f8fdf9;border:1.5px solid var(--border);border-radius:12px;padding:14px;display:none;
+  }
+  .room-lbl{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:10px;}
+  .room-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+  .rbtn{
+    padding:11px 4px;text-align:center;border:1.5px solid #d8eedd;
+    border-radius:8px;background:#fff;
+    font-family:'Kanit',sans-serif;font-weight:600;font-size:14px;
+    color:var(--text);cursor:pointer;transition:all .14s;
+  }
+  .rbtn:hover{border-color:var(--green-bright);background:#eef8f2;}
+  .rbtn.on{background:var(--gold-light);border-color:var(--gold);color:#fff;box-shadow:0 3px 8px -3px rgba(199,125,10,.4);}
+
+  .class-badge{
+    display:none;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--green);
+    padding:9px 13px;background:#edf7f0;border:1px solid #b0dcc0;border-radius:9px;
+  }
+  .class-badge.show{display:flex;}
+  .class-badge .ctag{
+    background:var(--green);color:#fff;padding:3px 13px;border-radius:999px;
+    font-family:'Kanit',sans-serif;font-size:15px;
+  }
+
+  /* weight */
+  .wrow{display:flex;gap:10px;}
+  .wrow input{flex:1;}
+  .kgbadge{
+    padding:0 18px;background:#f2f9f4;border:1.5px solid var(--border);
+    border-radius:12px;font-family:'Kanit',sans-serif;font-weight:600;
+    color:var(--muted);font-size:14px;display:flex;align-items:center;flex-shrink:0;
+  }
+  .money-box{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 20px;background:linear-gradient(135deg,#fff8e1,#fef5d4);
+    border:1.5px solid #f0c060;border-radius:12px;
+  }
+  .money-box .mlbl{font-size:13px;color:#7b5900;font-weight:600;display:flex;align-items:center;gap:6px;}
+  .money-box .mamount{font-family:'Kanit',sans-serif;font-weight:800;font-size:28px;color:var(--gold);}
+
+  /* submit */
+  .divider{height:1px;background:var(--border);}
+  .sub-area{padding:22px;}
+  .sub-btn{
+    width:100%;padding:17px;border:none;border-radius:14px;
+    background:linear-gradient(135deg,var(--green-mid),var(--green-dark));
+    color:#fff;font-family:'Kanit',sans-serif;font-weight:700;font-size:17px;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+    box-shadow:0 10px 30px -10px rgba(27,77,50,.5);transition:transform .12s,box-shadow .12s;
+  }
+  .sub-btn:hover{transform:translateY(-2px);box-shadow:0 16px 36px -10px rgba(27,77,50,.55);}
+  .sub-btn:active{transform:translateY(0);}
+  .sub-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;}
+  .status{
+    margin-top:14px;padding:13px 16px;border-radius:10px;
+    font-size:14px;font-weight:600;text-align:center;display:none;line-height:1.5;
+  }
+  .status.ok{display:block;background:#d8f3e5;color:#1b4332;border:1px solid #b0dcc0;}
+  .status.err{display:block;background:#fde8e8;color:#7b1c1c;border:1px solid #f5b5b5;}
+
+  /* settings */
+  .settings{max-width:720px;margin:14px auto 0;padding:0 16px;}
+  details{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+  summary{
+    padding:14px 18px;cursor:pointer;
+    font-family:'Kanit',sans-serif;font-weight:600;font-size:14px;color:var(--green);
+    list-style:none;display:flex;align-items:center;gap:8px;user-select:none;
+  }
+  summary::after{content:'▼';margin-left:auto;font-size:11px;color:var(--muted);transition:transform .2s;}
+  details[open] summary::after{transform:rotate(180deg);}
+  .set-body{padding:20px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:18px;}
+  .sgrp label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px;}
+  .sgrp input,.sgrp textarea{
+    width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;
+    font-family:'Sarabun',sans-serif;font-size:14px;color:var(--text);background:#f8fdf9;
+    box-sizing:border-box;
+  }
+  .sgrp input:focus,.sgrp textarea:focus{outline:none;border-color:var(--green-light);}
+  .sgrp textarea{resize:vertical;min-height:96px;}
+  .shint2{font-size:12px;color:#9baaa0;margin-top:4px;line-height:1.5;}
+  .sbtn{
+    padding:10px 20px;border:none;border-radius:9px;
+    background:var(--green);color:#fff;
+    font-family:'Kanit',sans-serif;font-weight:600;font-size:14px;
+    cursor:pointer;align-self:flex-start;transition:opacity .15s;
+  }
+  .sbtn:hover{opacity:.85;}
+
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:inline-block;}
+
+  @media(max-width:500px){
+    .grade-grid{grid-template-columns:repeat(3,1fr);}
+    .room-grid{grid-template-columns:repeat(4,1fr);}
+    .mamount{font-size:22px !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-inner">
+    <div class="badge">♻️ ธนาคารขยะรีไซเคิล</div>
+    <h1>ฝากขวดวันนี้<br>เปลี่ยนขยะเป็นเงินออม</h1>
+    <p>บันทึกการฝากขวดพลาสติกของนักเรียน คำนวณมูลค่าอัตโนมัติตามราคารับซื้อของวันนั้น</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="card">
+    <div class="pricebar">
+      <label>💰 ราคารับซื้อขวดวันนี้</label>
+      <div class="price-wrap">
+        <input type="number" id="pricePerKg" value="12" min="0" step="0.5">
+        <span>บาท/กก.</span>
+      </div>
+    </div>
+
+    <div class="steps">
+      <!-- 1: date -->
+      <div class="step">
+        <div class="step-lbl"><div class="snum">1</div><div class="stitle">วันที่ฝากขวด</div></div>
+        <input type="date" id="depositDate">
+      </div>
+
+      <!-- 2: grade/room -->
+      <div class="step">
+        <div class="step-lbl"><div class="snum">2</div><div class="stitle">ระดับชั้นและห้องเรียน</div></div>
+        <div class="shint">เลือกระดับชั้นก่อน จากนั้นเลือกห้อง</div>
+        <div class="grade-grid" id="gradeGrid"></div>
+        <div class="room-wrap" id="roomWrap">
+          <div class="room-lbl">เลือกห้องเรียน</div>
+          <div class="room-grid" id="roomGrid"></div>
+        </div>
+        <div class="class-badge" id="classBadge">
+          ✅ ห้องที่เลือก: <span class="ctag" id="classTag">-</span>
+        </div>
+      </div>
+
+      <!-- 3: weight -->
+      <div class="step">
+        <div class="step-lbl"><div class="snum">3</div><div class="stitle">น้ำหนักขวด</div></div>
+        <div class="wrow">
+          <input type="number" id="weight" placeholder="0.00" min="0" step="0.1">
+          <div class="kgbadge">กิโลกรัม</div>
+        </div>
+        <div class="money-box">
+          <span class="mlbl">🪙 มูลค่าที่ได้รับ</span>
+          <span class="mamount" id="moneyAmt">฿ 0.00</span>
+        </div>
+      </div>
+
+      <!-- 4: banker -->
+      <div class="step">
+        <div class="step-lbl"><div class="snum">4</div><div class="stitle">นายธนาคารผู้ทำธุรกรรม</div></div>
+        <select id="bankerSel">
+          <option value="">-- เลือกนายธนาคาร --</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="sub-area">
+      <button class="sub-btn" id="subBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+        บันทึกรายการฝากขวด
+      </button>
+      <div class="status" id="statusMsg"></div>
+    </div>
+  </div>
+
+  <div class="settings">
+    <details>
+      <summary>⚙️ ตั้งค่าระบบ (ครู / ผู้ดูแล)</summary>
+      <div class="set-body">
+        <div class="sgrp">
+          <label>Google Apps Script URL</label>
+          <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
+          <div class="shint2">วาง Web App URL ของ Apps Script ที่นี่ เพื่อส่งข้อมูลเข้า Google Sheet อัตโนมัติ</div>
+        </div>
+        <div class="sgrp">
+          <label>รายชื่อนายธนาคาร (ชื่อละ 1 บรรทัด)</label>
+          <textarea id="bankersTxt"></textarea>
+        </div>
+        <div class="sgrp">
+          <label>ราคาเริ่มต้น (บาท/กก.)</label>
+          <input type="number" id="defPrice" placeholder="12" min="0" step="0.5">
+        </div>
+        <button class="sbtn" id="saveSetBtn">💾 บันทึกการตั้งค่า</button>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script>
+(async()=>{
+  const KEY = 'wbk:cfg';
+  const DEF = {
+    scriptUrl:'https://script.google.com/macros/s/AKfycbxOXLSMW-PiiN5pKvflLbRU64ZVchCt7ZqWnACThQkzhNSHjEABDyVUsUSWbrr7DUDY/exec',
+    defaultPrice:10,
+    bankers:['ครูต้น','ครูเปรม','ครูออย','ครูฟาง','ครูตาล']
+  };
+  let cfg={...DEF};
+
+  async function loadCfg(){
+    try{const r=await window.storage.get(KEY);if(r&&r.value)cfg={...DEF,...JSON.parse(r.value)};}catch(e){}
+  }
+  async function saveCfg(){
+    try{await window.storage.set(KEY,JSON.stringify(cfg));}catch(e){console.error(e);}
+  }
+
+  const gradeGrid=document.getElementById('gradeGrid');
+  const roomWrap=document.getElementById('roomWrap');
+  const roomGrid=document.getElementById('roomGrid');
+  const classBadge=document.getElementById('classBadge');
+  const classTag=document.getElementById('classTag');
+  const bankerSel=document.getElementById('bankerSel');
+  const depositDate=document.getElementById('depositDate');
+  const weightIn=document.getElementById('weight');
+  const priceIn=document.getElementById('pricePerKg');
+  const moneyAmt=document.getElementById('moneyAmt');
+  const subBtn=document.getElementById('subBtn');
+  const statusMsg=document.getElementById('statusMsg');
+  const scriptUrlIn=document.getElementById('scriptUrl');
+  const bankersTxt=document.getElementById('bankersTxt');
+  const defPriceIn=document.getElementById('defPrice');
+  const saveSetBtn=document.getElementById('saveSetBtn');
+
+  let selGrade=null,selRoom=null;
+  const GRADES=['ป.1','ป.2','ป.3','ป.4','ป.5','ป.6'];
+
+  await loadCfg();
+
+  depositDate.value=new Date().toISOString().split('T')[0];
+  priceIn.value=cfg.defaultPrice;
+  scriptUrlIn.value=cfg.scriptUrl||'';
+  bankersTxt.value=cfg.bankers.join('\n');
+  defPriceIn.value=cfg.defaultPrice;
+
+  // grade buttons
+  GRADES.forEach(g=>{
+    const b=document.createElement('button');
+    b.type='button';b.className='gbtn';b.textContent=g;
+    b.onclick=()=>{
+      selGrade=g;selRoom=null;
+      document.querySelectorAll('.gbtn').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      buildRooms();roomWrap.style.display='block';updateBadge();
+    };
+    gradeGrid.appendChild(b);
+  });
+
+  function buildRooms(){
+    roomGrid.innerHTML='';
+    for(let i=1;i<=7;i++){
+      const b=document.createElement('button');
+      b.type='button';b.className='rbtn';b.textContent=i;
+      b.onclick=()=>{
+        selRoom=i;
+        document.querySelectorAll('.rbtn').forEach(x=>x.classList.remove('on'));
+        b.classList.add('on');updateBadge();
+      };
+      roomGrid.appendChild(b);
+    }
+  }
+
+  function updateBadge(){
+    if(selGrade&&selRoom){classTag.textContent=`${selGrade}/${selRoom}`;classBadge.classList.add('show');}
+    else{classBadge.classList.remove('show');}
+  }
+
+  function buildBankers(){
+    bankerSel.innerHTML='<option value="">-- เลือกนายธนาคาร --</option>';
+    cfg.bankers.forEach(n=>{if(n.trim()){const o=document.createElement('option');o.value=n.trim();o.textContent=n.trim();bankerSel.appendChild(o);}});
+  }
+  buildBankers();
+
+  function calcMoney(){
+    const m=(parseFloat(weightIn.value)||0)*(parseFloat(priceIn.value)||0);
+    moneyAmt.textContent='฿ '+m.toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
+    return m;
+  }
+  weightIn.addEventListener('input',calcMoney);
+  priceIn.addEventListener('input',calcMoney);
+
+  saveSetBtn.onclick=async()=>{
+    cfg.scriptUrl=scriptUrlIn.value.trim();
+    cfg.bankers=bankersTxt.value.split('\n').filter(s=>s.trim());
+    cfg.defaultPrice=parseFloat(defPriceIn.value)||12;
+    await saveCfg();
+    buildBankers();
+    priceIn.value=cfg.defaultPrice;calcMoney();
+    saveSetBtn.textContent='✅ บันทึกแล้ว!';
+    setTimeout(()=>{saveSetBtn.textContent='💾 บันทึกการตั้งค่า';},2000);
+  };
+
+  function showStatus(type,msg){
+    statusMsg.className='status '+type;statusMsg.textContent=msg;
+    if(type==='ok')setTimeout(()=>{if(statusMsg.textContent===msg)statusMsg.className='status';},9000);
+  }
+
+  subBtn.onclick=async()=>{
+    const date=depositDate.value,weight=parseFloat(weightIn.value),price=parseFloat(priceIn.value),banker=bankerSel.value,money=calcMoney();
+    if(!date){showStatus('err','❌ กรุณาเลือกวันที่ฝากขวด');return;}
+    if(!selGrade||!selRoom){showStatus('err','❌ กรุณาเลือกระดับชั้นและห้องเรียน');return;}
+    if(!weight||weight<=0){showStatus('err','❌ กรุณากรอกน้ำหนักขวดให้ถูกต้อง (ต้องมากกว่า 0)');return;}
+    if(!banker){showStatus('err','❌ กรุณาเลือกนายธนาคารผู้ทำธุรกรรม');return;}
+    if(!cfg.scriptUrl){showStatus('err','❌ ยังไม่ได้ตั้งค่า Google Script URL — กรอกในส่วน "ตั้งค่าระบบ" ด้านล่าง');return;}
+
+    const payload={date,grade:`${selGrade}/${selRoom}`,weightKg:weight,pricePerKg:price,totalMoney:money,banker};
+    subBtn.disabled=true;
+    subBtn.innerHTML='<span class="spinner"></span> กำลังบันทึก...';
+    try{
+      await fetch(cfg.scriptUrl,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});
+      showStatus('ok',`✅ บันทึกสำเร็จ! ${payload.grade} ฝากขวด ${weight.toFixed(2)} กก. รับเงิน ${money.toFixed(2)} บาท | โดย ${banker}`);
+      weightIn.value='';bankerSel.value='';selRoom=null;
+      document.querySelectorAll('.rbtn').forEach(x=>x.classList.remove('on'));
+      updateBadge();calcMoney();
+    }catch(err){showStatus('err','❌ ส่งข้อมูลไม่สำเร็จ กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');}
+    finally{
+      subBtn.disabled=false;
+      subBtn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> บันทึกรายการฝากขวด';
+    }
+  };
+})();
+</script>
+</body>
+</html>
